@@ -1,19 +1,24 @@
 <script lang="ts">
 	import "../../app.css"
 	export let data;
+	let isLogoutPopupOpen = false;
 	$: ({ supabase } = data);
 
 	$: logout = async () => {
 		const { error } = await supabase.auth.signOut();
 		if (error) {
-			console.error(error);
-		}
-	};
-	let isOpen = false;
+      console.error(error);
+    } else {
+      alert("Anda telah logout");
+      window.location.href = "/"; // Redirect after alert
+    }
+  }
 
-	function toggleDropdown() {
-	isOpen = !isOpen;
-	}
+  let isOpen = false;
+
+  function toggleDropdown() {
+    isOpen = !isOpen;
+  }
 </script>
 
 <header class="justify-content-center">
@@ -42,4 +47,5 @@
 </header>
 <main>
 	<slot />
+	
 </main>
