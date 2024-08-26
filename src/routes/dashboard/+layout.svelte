@@ -1,4 +1,5 @@
-<script>
+<script lang="ts">
+	import "../../app.css"
 	export let data;
 	$: ({ supabase } = data);
 
@@ -33,8 +34,8 @@
 		  {/if}
 		</div>
 		<div class="hidden sm:flex space-x-4">
-		  <a href="/" class="text-white">Home</a>
-		  <button on:click={logout} class="text-white">Logout</button>
+		  <a href="/" class="text-black">Home</a>
+		  <button on:click={logout} class="text-black">Logout</button>
 		</div>
 	  </nav>
 	

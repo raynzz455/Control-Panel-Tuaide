@@ -1,28 +1,8 @@
 <script lang="ts">
-	import { invalidate } from '$app/navigation';
-	import type { EventHandler } from 'svelte/elements';
 
-	import type { PageData } from './$types';
+    export let data: { total: number, firstImageUrl: string };
 
-	export let data: PageData;
-	$: ({ notes, supabase, user } = data);
-
-	let handleSubmit: EventHandler<SubmitEvent, HTMLFormElement>;
-	$: handleSubmit = async (evt) => {
-		evt.preventDefault();
-		if (!evt.target) return;
-
-		const form = evt.target as HTMLFormElement;
-
-		const note = (new FormData(form).get('note') ?? '') as string;
-		if (!note) return;
-
-		const { error } = await supabase.from('notes').insert({ note });
-		if (error) console.error(error);
-
-		invalidate('supabase:db:notes');
-		form.reset();
-	};
+	
 </script>
 <body class="bg-white">
 	<div class="border max-h-screen w-screen md:max-w-[1000px] mx-auto">
@@ -40,11 +20,11 @@
 						</div>
 						<div>
 						  <h3 class="text-md font-semibold text-center">Total:</h3>
-						  <p class="text-lg font-bold text-center">123</p>
+						  <p class="text-lg font-bold text-center">{data.total}</p>
 						</div>
 					  </div>
 					<div class="w-[75%] p-2">
-					  <img src="/images/logo.png" alt="suki" class="object-cover max-h-full max-w-full mx-auto ">
+						<img src={data.firstImageUrl} alt="gambar pertama" class="object-cover max-h-full max-w-full mx-auto">
 					</div>
 				  </div>
 				</div>
@@ -76,16 +56,3 @@
 	</div>
 
 </body>
-<h1>Private page for user: {user?.email}</h1>
-<h2>Notes</h2>
-<ul>
-	{#each notes as note}
-		<li>{note.note}</li>
-	{/each}
-</ul>
-<form on:submit={handleSubmit}>
-	<label>
-		Add a note
-		<input name="note" type="text" />
-	</label>
-</form>
