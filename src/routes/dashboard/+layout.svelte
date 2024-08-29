@@ -25,7 +25,7 @@
 	<nav class="mx-auto h-[50px] border-b flex items-center justify-between px-4 sm:max-w-[1000px] sm:min-h-[80px]">
 		<img src="/images/logo-icon.png" alt="logo" class="max-w-[65%] max-h-[65%]">
 		<div class="relative sm:hidden">
-		  <button on:click={toggleDropdown} class="text-black font-medium rounded-lg text-sm py-2.5 text-center inline-flex items-center">
+		  <button on:click={toggleDropdown} class="text-black font-medium rounded-lg text-sm py-4 text-center inline-flex items-center">
 			Menu
 			<svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 			  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
