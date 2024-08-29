@@ -39,7 +39,7 @@
 		  {/if}
 		</div>
 		<div class="hidden sm:flex space-x-4">
-		  <a href="/" class="text-black">Home</a>
+		  <a href="/dashboard" class="text-black">Home</a>
 		  <button on:click={logout} class="text-black">Logout</button>
 		</div>
 	  </nav>

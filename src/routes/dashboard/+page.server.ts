@@ -24,7 +24,7 @@ export const load: PageServerLoad = async () => {
     const firstImage = files[0];
     const { data: publicUrlData } = await supabase.storage
       .from('porto')
-      .getPublicUrl(`images/${firstImage.name}`);
+      .getPublicUrl(`images/${firstImage.name}`, );
 
     return { total, firstImageUrl: publicUrlData.publicUrl };
   } catch (error) {
