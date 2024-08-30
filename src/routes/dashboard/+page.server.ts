@@ -1,11 +1,12 @@
 import type { PageServerLoad } from './$types';
 import supabase from '$lib/supabaseClient';
+
 export const load: PageServerLoad = async () => {
   try {
-    // Fetch the list of files in the "images" folder of the "porto" bucket
+    // Fetch the list of files in the "1" folder inside the "images" folder of the "porto" bucket
     const { data: files, error: storageError } = await supabase.storage
       .from('porto')
-      .list('images');
+      .list('images/1'); // Path yang diubah untuk folder "1" di dalam folder "images"
 
     if (storageError) {
       console.error('Error fetching files:', storageError);
@@ -24,7 +25,7 @@ export const load: PageServerLoad = async () => {
     const firstImage = files[0];
     const { data: publicUrlData } = await supabase.storage
       .from('porto')
-      .getPublicUrl(`images/${firstImage.name}`, );
+      .getPublicUrl(`images/1/${firstImage.name}`);
 
     return { total, firstImageUrl: publicUrlData.publicUrl };
   } catch (error) {
