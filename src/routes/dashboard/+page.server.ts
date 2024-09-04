@@ -1,35 +1,41 @@
 import type { PageServerLoad } from './$types';
-import supabase from '$lib/supabaseClient';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ locals: { supabase } }) => {
   try {
-    // Fetch the list of files in the "1" folder inside the "images" folder of the "porto" bucket
-    const { data: files, error: storageError } = await supabase.storage
-      .from('porto')
-      .list('images/1'); // Path yang diubah untuk folder "1" di dalam folder "images"
+    const subfolders = ['1', '2', '3', '4'];
+    let totalFiles = 0;
+    let firstImageUrl = '';
 
-    if (storageError) {
-      console.error('Error fetching files:', storageError);
-      return { total: 0, firstImageUrl: '' }; // Handle storage errors gracefully
+    for (const subfolder of subfolders) {
+      const { data: files, error: listError } = await supabase.storage
+        .from('porto')
+        .list(`images/${subfolder}`);
+
+      if (listError) {
+        console.error(`Error listing files in images/${subfolder}:`, listError);
+        continue;
+      }
+
+      if (files && files.length > 0) {
+        totalFiles += files.length;
+
+        if (!firstImageUrl) {
+          const firstImage = files[0];
+          const { data: publicUrlData } = await supabase.storage
+            .from('porto')
+            .getPublicUrl(`images/${subfolder}/${firstImage.name}`);
+
+          if (publicUrlData) {
+            firstImageUrl = publicUrlData.publicUrl;
+            console.log(`First image URL: ${firstImageUrl}`); // Tambahkan log di sini
+          }
+        }
+      }
     }
 
-    // Get the total number of files
-    const total = files.length;
-
-    // Ensure there is at least one file
-    if (total === 0) {
-      return { total, firstImageUrl: '' }; // Indicate no images found
-    }
-
-    // Get the URL of the first image
-    const firstImage = files[0];
-    const { data: publicUrlData } = await supabase.storage
-      .from('porto')
-      .getPublicUrl(`images/1/${firstImage.name}`);
-
-    return { total, firstImageUrl: publicUrlData.publicUrl };
+    return { total: totalFiles, firstImageUrl };
   } catch (error) {
     console.error('Unexpected error:', error);
-    return { total: 0, firstImageUrl: '' }; // Handle unexpected errors gracefully
+    return { total: 0, firstImageUrl: '' };
   }
 };

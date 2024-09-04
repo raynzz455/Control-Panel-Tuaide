@@ -16,5 +16,11 @@
 		return () => data.subscription.unsubscribe();
 	});
 </script>
-
+<div>
+	{#if data.session}
+	  <p>User is logged in</p>
+	{:else}
+	  <p>User is not logged in</p>
+	{/if}
+  </div>
 <slot />
