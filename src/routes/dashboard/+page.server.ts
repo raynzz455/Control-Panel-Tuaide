@@ -27,7 +27,7 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 
           if (publicUrlData) {
             firstImageUrl = publicUrlData.publicUrl;
-            console.log(`First image URL: ${firstImageUrl}`); // Tambahkan log di sini
+            console.log(`First image URL: ${firstImageUrl}`); 
           }
         }
       }
