@@ -19,7 +19,7 @@
 		<button on:click={PortoflioPath} class="flex flex-row w-full h-[200px] mb-5 md:h-[300px] p-4 sm:flex-col sm:w-1/2">
 		  <div class="relative w-full bg-white shadow-lg rounded-lg overflow-hidden hover:bg-gray-200 transition duration-300">
 			<div class="absolute inset-0 flex items-center justify-center text-9xl font-bold text-gray-300 opacity-0 hover:opacity-100 transition duration-300">
-			  1
+				<img src={data.firstImageUrl} alt="gambar pertama" class="object-cover h-full w-full mx-auto" />
 			</div>
 			<div class="flex flex-row h-[200px] md:h-[260px]">
 			  <div class="w-[25%] flex flex-col justify-between py-6 md:px-2 md:pt-8 md:pb-10">

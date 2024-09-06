@@ -1,4 +1,4 @@
-import type { PageServerLoad } from './$types';
+import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ url, locals }) => {
   const supabase = locals.supabase;
@@ -41,7 +41,6 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 };
 
 
-import type { Actions } from './$types';
 
 export const actions: Actions = {
   default: async ({ request, locals }) => {
