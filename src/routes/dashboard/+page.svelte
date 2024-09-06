@@ -2,8 +2,6 @@
 	import { goto } from '$app/navigation';
 	export let data: { total: number, firstImageUrl: string };
 	
-	console.log(data); // Tambahkan log di sini
-
 	function PortoflioPath() {
 	  goto('/dashboard/portofolio');
 	}
