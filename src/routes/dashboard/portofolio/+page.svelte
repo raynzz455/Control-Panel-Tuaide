@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+  import Fun from '$lib/components/Delup.svelte'
   import { goto } from '$app/navigation';
 
 export let data: { images: string[], folder: string };
@@ -19,10 +21,16 @@ function handleFileChange(event: Event) {
     if (confirmUpload) {
       input.form?.submit();
     } else {
-      input.value = ''; // Reset input file
+      input.value = '';
     }
   }
 }
+let isCheckboxChecked = false;
+
+  function handleCheckboxChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    isCheckboxChecked = target.checked;
+  }
 </script>
 
 <div class="bg-white max-h-screen w-screen sm:max-w-[1000px] mx-auto">
@@ -42,9 +50,9 @@ function handleFileChange(event: Event) {
       <div class="flex flex-row gap-2">
         <!-- Checkbox Select -->
         <div class="flex items-center pb-2">
-          <input type="checkbox" class="mr-2" id="checkbox-select">
+          <input type="checkbox" class="mr-2" id="checkbox-select" on:change={handleCheckboxChange}>
           <label for="checkbox-select">SELECT</label>
-        </div>
+        </div>        
             <!-- Form untuk button pertama -->
             <form method="post" enctype="multipart/form-data" class="flex relative sm:hidden items-center justify-center w-8 h-8 rounded-full bg-[#f28928] hover:bg-[#c97b31] text-white">
               <input type="hidden" name="folder" value={selectedFolder} />
@@ -57,7 +65,7 @@ function handleFileChange(event: Event) {
             </form>
 
             <!-- Form untuk button kedua -->
-            <form method="post" enctype="multipart/form-data" class="hidden relative sm:block sm:flex items-center justify-center pr-4 pl-6 bg-[#f28928] hover:bg-[#c97b31] text-white rounded-3xl">
+            <form method="post" enctype="multipart/form-data" class="hidden relative sm:block sm:flex items-center justify-center pr-2 pl-4 bg-[#f28928] hover:bg-[#c97b31] text-white rounded-3xl">
               <input type="hidden" name="folder" value={selectedFolder} />
                 <input type="file" class="absolute opacity-0 w-full h-full cursor-pointer" name="file" on:change={handleFileChange} />
                 <span>Tambah Gambar</span>
@@ -75,7 +83,9 @@ function handleFileChange(event: Event) {
         <div class="w-full h-full overflow-hidden group relative">
           <img src="{image}" alt="gambar" class="gambarlah w-full h-full object-cover object-center transition-transform duration-[350ms] group-hover:scale-110">
           <!-- Checkbox Img -->
-
+        {#if isCheckboxChecked}
+        <Fun />
+      {/if}
         </div>
       </div>
       {/each}
