@@ -23,7 +23,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
     console.error('Error fetching files:', storageError);
     return { total: 0, images: [] };
   }
-
+ 
   const imageUrls = await Promise.all(files.map(async (file) => {
     const { data: publicUrlData } = supabase.storage
       .from('porto')

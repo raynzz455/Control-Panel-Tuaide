@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import Fun from '$lib/components/Delup.svelte'
   import { goto } from '$app/navigation';
 
@@ -85,7 +84,7 @@ let isCheckboxChecked = false;
           <!-- Checkbox Img -->
         {#if isCheckboxChecked}
         <Fun />
-      {/if}
+        {/if}
         </div>
       </div>
       {/each}
