@@ -4,7 +4,7 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
   try {
     const subfolders = ['1', '2', '3', '4'];
     let totalFiles = 0;
-    let firstImageUrl = '';
+    const imageUrls: string[] = [];
 
     for (const subfolder of subfolders) {
       const { data: files, error: listError } = await supabase.storage
@@ -19,22 +19,21 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
       if (files && files.length > 0) {
         totalFiles += files.length;
 
-        if (!firstImageUrl) {
-          const firstImage = files[0];
+        for (const file of files) {
           const { data: publicUrlData } = await supabase.storage
             .from('porto')
-            .getPublicUrl(`images/${subfolder}/${firstImage.name}`);
+            .getPublicUrl(`images/${subfolder}/${file.name}`);
 
           if (publicUrlData) {
-            firstImageUrl = publicUrlData.publicUrl;
+            imageUrls.push(publicUrlData.publicUrl);
           }
         }
       }
     }
 
-    return { total: totalFiles, firstImageUrl };
+    return { total: totalFiles, imageUrls };
   } catch (error) {
     console.error('Unexpected error:', error);
-    return { total: 0, firstImageUrl: '' };
+    return { total: 0, imageUrls: [] };
   }
 };

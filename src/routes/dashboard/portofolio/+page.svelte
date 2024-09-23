@@ -1,30 +1,32 @@
 <script lang="ts">
-  import Fun from '$lib/components/Delup.svelte'
+  import Fun from '$lib/components/Delup.svelte';
   import { goto } from '$app/navigation';
+  import { fade } from 'svelte/transition'; // Impor efek transisi
 
-export let data: { images: string[], folder: string };
+  export let data: { images: string[], folder: string };
 
-let selectedFolder = data.folder || '1';
+  let selectedFolder = data.folder || '1';
 
-function handleFolderChange(event: Event) {
-  const target = event.target as HTMLSelectElement;
-  selectedFolder = target.value;
-  goto(`?folder=${selectedFolder}`);
-}
+  function handleFolderChange(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    selectedFolder = target.value;
+    goto(`?folder=${selectedFolder}`);
+  }
 
-function handleFileChange(event: Event) {
-  const input = event.target as HTMLInputElement;
-  const file = input.files?.[0];
-  if (file) {
-    const confirmUpload = confirm(`Apakah kamu yakin untuk mengupload "${file.name}" ini?`);
-    if (confirmUpload) {
-      input.form?.submit();
-    } else {
-      input.value = '';
+  function handleFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (file) {
+      const confirmUpload = confirm(`Apakah kamu yakin untuk mengupload "${file.name}" ini?`);
+      if (confirmUpload) {
+        input.form?.submit();
+      } else {
+        input.value = '';
+      }
     }
   }
-}
-let isCheckboxChecked = false;
+
+  let isCheckboxChecked = false;
 
   function handleCheckboxChange(event: Event) {
     const target = event.target as HTMLInputElement;
@@ -51,30 +53,30 @@ let isCheckboxChecked = false;
         <div class="flex items-center pb-2">
           <input type="checkbox" class="mr-2" id="checkbox-select" on:change={handleCheckboxChange}>
           <label for="checkbox-select">SELECT</label>
-        </div>        
-            <!-- Form untuk button pertama -->
-            <form method="post" enctype="multipart/form-data" class="flex relative sm:hidden items-center justify-center w-8 h-8 rounded-full bg-[#f28928] hover:bg-[#c97b31] text-white">
-              <input type="hidden" name="folder" value={selectedFolder} />
-              <button class="w-full h-full">
-                <input type="file" class="absolute opacity-0 w-full h-full cursor-pointer" name="file" on:change={handleFileChange} />
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                </svg>
-              </button>
-            </form>
+        </div>
+        <!-- Form untuk button pertama -->
+        <form method="post" enctype="multipart/form-data" class="flex relative sm:hidden items-center justify-center w-8 h-8 rounded-full bg-[#f28928] hover:bg-[#c97b31] text-white">
+          <input type="hidden" name="folder" value={selectedFolder} />
+          <button class="w-full h-full">
+            <input type="file" class="absolute opacity-0 w-full h-full cursor-pointer" name="file" on:change={handleFileChange} />
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+          </button>
+        </form>
 
-            <!-- Form untuk button kedua -->
-            <form method="post" enctype="multipart/form-data" class="hidden relative sm:block sm:flex items-center justify-center pr-2 pl-4 bg-[#f28928] hover:bg-[#c97b31] text-white rounded-3xl">
-              <input type="hidden" name="folder" value={selectedFolder} />
-                <input type="file" class="absolute opacity-0 w-full h-full cursor-pointer" name="file" on:change={handleFileChange} />
-                <span>Tambah Gambar</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                </svg>
-            </form>
-            
+        <!-- Form untuk button kedua -->
+        <form method="post" enctype="multipart/form-data" class="hidden relative sm:block sm:flex items-center justify-center pr-2 pl-4 bg-[#f28928] hover:bg-[#c97b31] text-white rounded-3xl">
+          <input type="hidden" name="folder" value={selectedFolder} />
+          <input type="file" class="absolute opacity-0 w-full h-full cursor-pointer" name="file" on:change={handleFileChange} />
+          <span>Tambah Gambar</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+        </form>
       </div>
     </div>
+
     <!-- Images -->
     <div class="w-full h-auto p-2 flex flex-col gap-4 sm:py-4 sm:grid sm:grid-cols-3">
       {#each data.images as image (image)}      
@@ -82,13 +84,14 @@ let isCheckboxChecked = false;
         <div class="w-full h-full overflow-hidden group relative">
           <img src="{image}" alt="gambar" class="gambarlah w-full h-full object-cover object-center transition-transform duration-[350ms] group-hover:scale-110">
           <!-- Checkbox Img -->
-        {#if isCheckboxChecked}
-        <Fun />
-        {/if}
+          {#if isCheckboxChecked}
+            <div in:fade={{ duration: 200 }} out:fade={{ duration: 200 }}>
+              <Fun />
+            </div>
+          {/if}
         </div>
       </div>
       {/each}
-
     </div>
 
   </div>
