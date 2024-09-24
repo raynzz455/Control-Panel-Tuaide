@@ -17,7 +17,6 @@
   function handleFileChange(event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
-
     if (file) {
       const confirmUpload = confirm(`Apakah kamu yakin untuk mengupload "${file.name}" ini?`);
       if (confirmUpload) {
@@ -35,41 +34,6 @@
     const target = event.target as HTMLInputElement;
     isCheckboxChecked = target.checked;
   }
-
-  async function handleDelete(image: string) {
-  const confirmDelete = confirm(`Are you sure you want to delete "${image}"?`);
-  if (confirmDelete) {
-    isLoading = true;
-
-    try {
-      const response = await fetch('/dashboard/portofolio', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          image: image,
-          folder: selectedFolder
-        })
-      });
-
-      if (response.ok) {
-        console.log(`File "${image}" deleted successfully.`);
-        data.images = data.images.filter(img => img !== image);
-      } else {
-        const errorText = await response.text(); // Fetch raw text to understand the error
-        console.error('Failed to delete file:', errorText);
-        alert(`Failed to delete file: ${errorText}`);
-      }
-    } catch (error) {
-      console.error('An error occurred:', error);
-      alert('An error occurred while trying to delete the file. Please try again.');
-    } finally {
-      isLoading = false;
-    }
-  }
-}
-
 </script>
 
 <div class="bg-white max-h-screen w-screen sm:max-w-[1000px] mx-auto">
@@ -137,14 +101,9 @@
       <div class="border w-full sm:w-[300px] h-[230px] sm:h-[200px] mx-auto">
         <div class="w-full h-full overflow-hidden group relative">
           <img src="{image}" alt="gambar" class="gambarlah w-full h-full object-cover object-center transition-transform duration-[350ms] group-hover:scale-110">
-          
           {#if isCheckboxChecked}
-            <div class="absolute bottom-0 left-0 w-full p-2 bg-white bg-opacity-75">
-              <button 
-                on:click={() => handleDelete(image)} 
-                class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">
-                Delete
-              </button>
+            <div in:fade={{ duration: 200 }} out:fade={{ duration: 200 }}>
+              <Fun />
             </div>
           {/if}
         </div>
