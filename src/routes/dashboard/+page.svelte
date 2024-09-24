@@ -52,7 +52,7 @@
               </div>
             </div>
             <div class="w-[75%] py-2 pr-2 transition-all duration-300 ease-in-out">
-              <img src={currentImage} alt="gambar pertama" class="object-cover h-full w-full mx-auto transition-opacity duration-500" class:opacity-0={!isVisible} class:opacity-100={isVisible} />
+              <img src={currentImage} alt="gambar pertama" class="object-cover h-full w-full mx-auto transition-opacity duration-300" class:opacity-0={!isVisible} class:opacity-100={isVisible} />
             </div>
           </div>
         </div>

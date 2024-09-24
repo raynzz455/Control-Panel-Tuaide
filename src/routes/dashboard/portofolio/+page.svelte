@@ -1,11 +1,12 @@
 <script lang="ts">
   import Fun from '$lib/components/Delup.svelte';
   import { goto } from '$app/navigation';
-  import { fade } from 'svelte/transition'; // Impor efek transisi
+  import { fade } from 'svelte/transition';
 
-  export let data: { images: string[], folder: string };
+  export let data: { images: string[], folder: string, user: { email: string } | null };
 
   let selectedFolder = data.folder || '1';
+  let isLoading = false;
 
   function handleFolderChange(event: Event) {
     const target = event.target as HTMLSelectElement;
@@ -16,9 +17,11 @@
   function handleFileChange(event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
+
     if (file) {
       const confirmUpload = confirm(`Apakah kamu yakin untuk mengupload "${file.name}" ini?`);
       if (confirmUpload) {
+        isLoading = true;
         input.form?.submit();
       } else {
         input.value = '';
@@ -32,16 +35,61 @@
     const target = event.target as HTMLInputElement;
     isCheckboxChecked = target.checked;
   }
+
+  async function handleDelete(image: string) {
+  const confirmDelete = confirm(`Are you sure you want to delete "${image}"?`);
+  if (confirmDelete) {
+    isLoading = true;
+
+    try {
+      const response = await fetch('/dashboard/portofolio', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          image: image,
+          folder: selectedFolder
+        })
+      });
+
+      if (response.ok) {
+        console.log(`File "${image}" deleted successfully.`);
+        data.images = data.images.filter(img => img !== image);
+      } else {
+        const errorText = await response.text(); // Fetch raw text to understand the error
+        console.error('Failed to delete file:', errorText);
+        alert(`Failed to delete file: ${errorText}`);
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
+      alert('An error occurred while trying to delete the file. Please try again.');
+    } finally {
+      isLoading = false;
+    }
+  }
+}
+
 </script>
 
 <div class="bg-white max-h-screen w-screen sm:max-w-[1000px] mx-auto">
+  {#if data.user}
+    <div class="text-green-500 text-center mb-4">
+      <p>Welcome, {data.user.email}!</p>
+    </div>
+  {:else}
+    <div class="text-red-500 text-center mb-4">
+      <p>User not authenticated. Please log in to access your portfolio.</p>
+    </div>
+  {/if}
+
   <p class="text-left ml-5 sm:ml-6 text-sm md:text-lg font-medium uppercase my-4">Portofolio</p>
+
   <div class="max-h-[90vh] w-full">
-    <!-- Header -->
     <div class="bg-gray-100 text-left text-xs font-medium text-gray-500 uppercase tracking-wider p-3 sm:rounded-tl-2xl sm:rounded-tr-2xl flex flex-row justify-between">
       <div class="flex flex-row">
         <p class="px-4 sm:px-5 flex text-left py-3">Images</p>
-        <select class="bg-transparent justify-center " on:change={handleFolderChange}>
+        <select class="bg-transparent justify-center" on:change={handleFolderChange}>
           <option value="1" selected={data.folder === '1'}>Logo</option>
           <option value="2" selected={data.folder === '2'}>Print Media</option>
           <option value="3" selected={data.folder === '3'}>Digital Photo</option>
@@ -49,12 +97,10 @@
         </select>
       </div>
       <div class="flex flex-row gap-2">
-        <!-- Checkbox Select -->
         <div class="flex items-center pb-2">
           <input type="checkbox" class="mr-2" id="checkbox-select" on:change={handleCheckboxChange}>
           <label for="checkbox-select">SELECT</label>
         </div>
-        <!-- Form untuk button pertama -->
         <form method="post" enctype="multipart/form-data" class="flex relative sm:hidden items-center justify-center w-8 h-8 rounded-full bg-[#f28928] hover:bg-[#c97b31] text-white">
           <input type="hidden" name="folder" value={selectedFolder} />
           <button class="w-full h-full">
@@ -65,7 +111,6 @@
           </button>
         </form>
 
-        <!-- Form untuk button kedua -->
         <form method="post" enctype="multipart/form-data" class="hidden relative sm:block sm:flex items-center justify-center pr-2 pl-4 bg-[#f28928] hover:bg-[#c97b31] text-white rounded-3xl">
           <input type="hidden" name="folder" value={selectedFolder} />
           <input type="file" class="absolute opacity-0 w-full h-full cursor-pointer" name="file" on:change={handleFileChange} />
@@ -77,22 +122,34 @@
       </div>
     </div>
 
-    <!-- Images -->
+    {#if isLoading}
+      <div class="text-center py-4">
+        <svg class="animate-spin h-8 w-8 mx-auto text-gray-500" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+        </svg>
+        <p>Loading...</p>
+      </div>
+    {/if}
+
     <div class="w-full h-auto p-2 flex flex-col gap-4 sm:py-4 sm:grid sm:grid-cols-3">
-      {#each data.images as image (image)}      
+      {#each data.images as image (image)}
       <div class="border w-full sm:w-[300px] h-[230px] sm:h-[200px] mx-auto">
         <div class="w-full h-full overflow-hidden group relative">
           <img src="{image}" alt="gambar" class="gambarlah w-full h-full object-cover object-center transition-transform duration-[350ms] group-hover:scale-110">
-          <!-- Checkbox Img -->
+          
           {#if isCheckboxChecked}
-            <div in:fade={{ duration: 200 }} out:fade={{ duration: 200 }}>
-              <Fun />
+            <div class="absolute bottom-0 left-0 w-full p-2 bg-white bg-opacity-75">
+              <button 
+                on:click={() => handleDelete(image)} 
+                class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">
+                Delete
+              </button>
             </div>
           {/if}
         </div>
       </div>
       {/each}
     </div>
-
   </div>
 </div>
