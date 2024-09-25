@@ -41,7 +41,7 @@
   }
 
   const imageName = imageUrl.split('/').pop()?.split('?')[0];
-  const folder = selectedFolder; // Maintain the context of the selected folder
+  const folder = selectedFolder; 
 
   if (!imageName) {
     alert("Nama file tidak ditemukan.");
@@ -53,10 +53,9 @@
   if (confirmDelete) {
     isLoading = true;
 
-    // Using FormData for deletion
     const formData = new FormData();
     formData.append('image', imageName);
-    formData.append('folder', folder); // Use the selected folder
+    formData.append('folder', folder); 
 
     const response = await fetch('/dashboard/portofolio', {
       method: 'POST',
@@ -67,7 +66,6 @@
     });
 
     if (response.ok) {
-      // Refresh the entire page to reload data
       window.location.reload();
     } else {
       const result = await response.json();

@@ -13,11 +13,10 @@
 		console.error(error);
 	  } else {
 		alert("Anda telah logout");
-		window.location.href = "/"; // Redirect after alert
+		window.location.href = "/"; 
 	  }
 	};
   
-	// Toggle dropdown menu
 	function toggleDropdown() {
 	  isOpen = !isOpen;
 	}
