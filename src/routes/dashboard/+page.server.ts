@@ -6,30 +6,33 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
     let totalFiles = 0;
     const imageUrls: string[] = [];
 
-    for (const subfolder of subfolders) {
+    const folderPromises = subfolders.map(async (subfolder) => {
       const { data: files, error: listError } = await supabase.storage
         .from('porto')
         .list(`images/${subfolder}`);
 
       if (listError) {
         console.error(`Error listing files in images/${subfolder}:`, listError);
-        continue;
+        return [];
       }
 
-      if (files && files.length > 0) {
-        totalFiles += files.length;
+      const urlPromises = files?.map(async (file) => {
+        const { data: publicUrlData } = await supabase.storage
+          .from('porto')
+          .getPublicUrl(`images/${subfolder}/${file.name}`);
 
-        for (const file of files) {
-          const { data: publicUrlData } = await supabase.storage
-            .from('porto')
-            .getPublicUrl(`images/${subfolder}/${file.name}`);
+        return publicUrlData?.publicUrl;
+      }) || [];
 
-          if (publicUrlData) {
-            imageUrls.push(publicUrlData.publicUrl);
-          }
-        }
-      }
-    }
+      const urls = await Promise.all(urlPromises);
+      const validUrls = urls.filter((url): url is string => url !== undefined);
+      totalFiles += validUrls.length;
+      return validUrls;
+    });
+    const results = await Promise.all(folderPromises);
+    results.forEach((urls) => {
+      imageUrls.push(...urls);
+    });
 
     return { total: totalFiles, imageUrls };
   } catch (error) {
