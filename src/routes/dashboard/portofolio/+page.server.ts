@@ -5,7 +5,6 @@ export const load: PageServerLoad = async ({ url, locals }) => {
   const { data: { user }, error: userError } = await supabase.auth.getUser();
   const isAuthenticated = !!user;
 
-  // Jika pengguna tidak terautentikasi, kembalikan error
   if (userError || !isAuthenticated) {
     return { status: 401, body: { error: 'User not authenticated', isAuthenticated: false } };
   }
@@ -54,7 +53,7 @@ export const actions: Actions = {
     const supabase = locals.supabase;
     const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-    // Validasi pengguna
+    // Validate user authentication
     if (userError || !user) {
       return { status: 401, body: { error: 'User not authenticated' } };
     }
@@ -62,31 +61,37 @@ export const actions: Actions = {
     const method = request.headers.get('x-http-method-override') || request.method;
 
     if (method === 'DELETE') {
-      const data = await request.json();
-      const { image, folder } = data;
-
-      // Validasi input
+      const data = await request.formData();
+      const image = data.get('image') as string;
+      const folder = data.get('folder') as string || '1'; // Default to '1' if not provided
+    
+      // Validate input
       if (!image || !folder) {
         return { status: 400, body: { error: 'Missing image or folder' } };
       }
-
-      const { error } = await supabase.storage
+      
+      // Construct the file path with URL encoding
+      const filePath = `images/${folder}/${encodeURIComponent(image)}`;
+    
+      // Attempt to delete the specified file
+      const { error: deleteError } = await supabase.storage
         .from('porto')
-        .remove([`images/${folder}/${image}`]);
-
-      if (error) {
-        return { status: 500, body: { error: error.message } };
+        .remove([filePath]);
+    
+      if (deleteError) {
+        console.error('Error deleting file:', deleteError);
+        return { status: 500, body: { error: deleteError.message } };
       }
 
       return { status: 200, body: { message: 'File deleted successfully' } };
     }
 
-    // Untuk metode POST (upload)
+    // Handle file upload (POST method)
     const data = await request.formData();
     const file = data.get('file') as File;
     const folder = data.get('folder') as string || '1';
 
-    // Validasi file
+    // Validate file upload
     if (!file) {
       return { status: 400, body: { error: 'No file uploaded' } };
     }
@@ -96,7 +101,7 @@ export const actions: Actions = {
       .from('porto')
       .upload(filePath, file);
 
-    // Menangani error upload
+    // Handle upload errors
     if (error) {
       return { status: 500, body: { error: error.message } };
     }
@@ -104,3 +109,4 @@ export const actions: Actions = {
     return { status: 200, body: { message: 'File uploaded successfully', data: uploadData } };
   }
 };
+
