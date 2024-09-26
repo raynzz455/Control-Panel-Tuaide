@@ -6,38 +6,56 @@
   let currentIndex = 0;
   let currentImage = '';
   let isVisible = true;
+  let isFading = false;
 
   const updateImage = () => {
+    // Update index dan ambil gambar baru
     currentIndex = (currentIndex + 1) % data.imageUrls.length;
     currentImage = data.imageUrls[currentIndex];
-    isVisible = true;
+    isVisible = true; // Siapkan untuk fade in
+    isFading = false; // Reset fading state
+  };
+
+  const fadeIn = () => {
+    isVisible = true; // Mulai fade in
+    setTimeout(() => {
+      isFading = false; // Reset fading state setelah fade in
+    }, 500); // Durasi fade in
+  };
+
+  const fadeOut = () => {
+    isFading = true; // Aktifkan fade out
+    setTimeout(() => {
+      updateImage(); // Update gambar setelah fade out
+      fadeIn(); // Mulai fade in untuk gambar baru
+    }, 500); // Durasi fade out
   };
 
   onMount(() => {
     if (data.imageUrls.length > 0) {
       currentImage = data.imageUrls[currentIndex];
       const interval = setInterval(() => {
-        isVisible = false; 
-        setTimeout(updateImage, 300); 
-      }, 10000); 
+        fadeOut(); // Panggil fade out saat interval
+      }, 10000); // Tunggu 10 detik sebelum fade out
+
+      fadeIn(); // Mulai fade in untuk gambar pertama
 
       return () => clearInterval(interval);
     }
   });
 
-  const handlePortfolioClick = async (event: MouseEvent) => { 
+  const handlePortfolioClick = async (event: MouseEvent) => {
     event.preventDefault();
-    await goto('/dashboard/portofolio'); 
+    await goto('/dashboard/portofolio');
   };
 
-  const handleTestimonialClick = async (event: MouseEvent) => { 
+  const handleTestimonialClick = async (event: MouseEvent) => {
     event.preventDefault();
-    await goto('/dashboard');
+    await goto('/dashboard/testimoni');
   };
 
   const handleDashboardHover = async () => {
-    // Prefetch data for the dashboard
-    await fetch('/dashboard'); // Assuming this endpoint fetches relevant data
+    await fetch('/dashboard'); 
   };
 </script>
 
@@ -46,7 +64,7 @@
     <div class="content md:mt-10 sm:flex">
       <button
         on:click={handlePortfolioClick}
-        on:mouseenter={handleDashboardHover}  
+        on:mouseenter={handleDashboardHover}
         class="flex flex-row w-full h-[200px] mb-5 md:h-[300px] p-4 sm:flex-col sm:w-1/2"
         aria-label="Go to Portfolio"
       >
@@ -58,22 +76,22 @@
               <p class="text-lg font-bold text-center">{data.total}</p>
             </div>
             <div class="w-[75%] py-2 pr-2">
-              <img 
-                src={currentImage} 
-                alt="Gambar Portofolio" 
-                class="object-cover h-full w-full mx-auto transition-opacity duration-300"
-                class:opacity-0={!isVisible} 
-                class:opacity-100={isVisible} 
-                on:transitionend={() => { if (!isVisible) isVisible = false; }}
+              <img
+                src={currentImage}
+                alt="Gambar Portofolio"
+                class="object-cover h-full w-full mx-auto transition-opacity duration-1000"
+                class:opacity-0={isFading}
+                class:opacity-100={!isFading && isVisible}
+                on:transitionend={() => { if (isFading) isVisible = false; }}
               />
             </div>
           </div>
         </div>
       </button>
 
-      <button 
-        on:click={handleTestimonialClick} 
-        on:mouseenter={handleDashboardHover}  
+      <button
+        on:click={handleTestimonialClick}
+        on:mouseenter={handleDashboardHover}
         class="flex flex-row w-full h-[200px] md:h-[300px] p-4 sm:flex-col sm:w-1/2"
         aria-label="Go to Testimonials"
       >
@@ -99,6 +117,6 @@
 
 <style>
   img {
-    transition: opacity 0.3s ease-in-out; /* Smooth transition for opacity */
+    transition: opacity 0.5s ease-in-out; /* Smooth transition for opacity */
   }
 </style>

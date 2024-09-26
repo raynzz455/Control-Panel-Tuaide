@@ -8,7 +8,7 @@
 
   let selectedFolder = data.folder || '1';
   let isLoading = false;
-  let displayClass = 'hidden'; // Kelas default
+  let displayClass = 'hidden'; 
 
   function handleFolderChange(event: Event) {
     const target = event.target as HTMLSelectElement;
@@ -81,19 +81,17 @@
   // Fungsi untuk memeriksa ukuran layar
   function checkScreenWidth() {
     if (window.matchMedia("(min-width: 640px)").matches) {
-      displayClass = 'block'; // untuk layar lebih besar dari 640px
+      displayClass = 'block'; 
     } else {
-      displayClass = 'hidden'; // untuk layar lebih kecil dari 640px
+      displayClass = 'hidden'; 
     }
   }
 
-  // Panggil fungsi saat komponen di-mount
   onMount(() => {
     checkScreenWidth();
-    window.addEventListener('resize', checkScreenWidth); // Tambahkan listener untuk perubahan ukuran
-
+    window.addEventListener('resize', checkScreenWidth); 
     return () => {
-      window.removeEventListener('resize', checkScreenWidth); // Hapus listener saat komponen di-unmount
+      window.removeEventListener('resize', checkScreenWidth);
     };
   });
 </script>
