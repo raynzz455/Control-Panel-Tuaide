@@ -2,14 +2,18 @@
   import Fun from '$lib/components/Delup.svelte';
   import { goto } from '$app/navigation';
   import { fade } from 'svelte/transition';
-  export let data: { images: string[], folder: string, user: { email: string } | null };
+
+  export let data: { images: string[], folder: string };
+
   let selectedFolder = data.folder || '1';
   let isLoading = false;
+
   function handleFolderChange(event: Event) {
     const target = event.target as HTMLSelectElement;
     selectedFolder = target.value;
     goto(`?folder=${selectedFolder}`);
   }
+
   function handleFileChange(event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
@@ -23,61 +27,59 @@
       }
     }
   }
+
   let isCheckboxChecked = false;
+
   function handleCheckboxChange(event: Event) {
     const target = event.target as HTMLInputElement;
     isCheckboxChecked = target.checked;
   }
+
   async function handleDelete(imageUrl: string | undefined) {
-  if (!imageUrl) {
-    alert("URL gambar tidak valid.");
-    return;
-  }
-  const imageName = imageUrl.split('/').pop()?.split('?')[0];
-  const folder = selectedFolder; // Maintain the context of the selected folder
-  if (!imageName) {
-    alert("Nama file tidak ditemukan.");
-    return;
-  }
-  const confirmDelete = confirm(`Apakah kamu yakin ingin menghapus "${imageName}"?`);
-  if (confirmDelete) {
-    isLoading = true;
-    // Using FormData for deletion
-    const formData = new FormData();
-    formData.append('image', imageName);
-    formData.append('folder', folder); // Use the selected folder
-    const response = await fetch('/dashboard/portofolio', {
-      method: 'POST',
-      headers: {
-        'x-http-method-override': 'DELETE',
-      },
-      body: formData,
-    });
-    if (response.ok) {
-      // Refresh the entire page to reload data
-      window.location.reload();
-    } else {
-      const result = await response.json();
-      alert(result.error || 'Gagal menghapus gambar');
+    if (!imageUrl) {
+      alert("URL gambar tidak valid.");
+      return;
     }
-    isLoading = false;
+
+    const imageName = imageUrl.split('/').pop()?.split('?')[0];
+    const folder = selectedFolder;
+
+    if (!imageName) {
+      alert("Nama file tidak ditemukan.");
+      return;
+    }
+
+    const confirmDelete = confirm(`Apakah kamu yakin ingin menghapus "${imageName}"?`);
+
+    if (confirmDelete) {
+      isLoading = true;
+
+      const formData = new FormData();
+      formData.append('image', imageName);
+      formData.append('folder', folder);
+
+      const response = await fetch('/dashboard/portofolio', {
+        method: 'POST',
+        headers: {
+          'x-http-method-override': 'DELETE',
+        },
+        body: formData,
+      });
+
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        const result = await response.json();
+        alert(result.error || 'Gagal menghapus gambar');
+      }
+      isLoading = false;
+    }
   }
-}
 </script>
 
 <div class="bg-white max-h-screen w-screen sm:max-w-[1000px] mx-auto">
-  {#if data.user}
-    <div class="text-green-500 text-center mb-4">
-      <p>Welcome, {data.user.email}!</p>
-    </div>
-  {:else}
-    <div class="text-red-500 text-center mb-4">
-      <p>User not authenticated. Please log in to access your portfolio.</p>
-    </div>
-  {/if}
-
   <p class="text-left ml-5 sm:ml-6 text-sm md:text-lg font-medium uppercase my-4">Portofolio</p>
- 
+
   <div class="max-h-[90vh] w-full">
     <div class="bg-gray-100 text-left text-xs font-medium text-gray-500 uppercase tracking-wider p-3 sm:rounded-tl-2xl sm:rounded-tr-2xl flex flex-row justify-between">
       <div class="flex flex-row">

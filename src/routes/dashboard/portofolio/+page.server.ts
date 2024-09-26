@@ -14,7 +14,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 
   if (!validFolders.includes(folder)) {
     console.error('Invalid folder specified:', folder);
-    return { total: 0, images: [], isAuthenticated, userEmail: user.email };
+    return { total: 0, images: [], isAuthenticated };
   }
 
   const { data: files, error: storageError } = await supabase.storage
@@ -23,7 +23,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 
   if (storageError) {
     console.error('Error fetching files:', storageError);
-    return { total: 0, images: [], isAuthenticated, userEmail: user.email };
+    return { total: 0, images: [], isAuthenticated };
   }
 
   const imageUrls = await Promise.all(files.map(async (file) => {
@@ -43,8 +43,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
     total: imageUrls.filter(url => url !== null).length, 
     images: imageUrls.filter(url => url !== null), 
     folder, 
-    isAuthenticated, 
-    userEmail: user.email 
+    isAuthenticated 
   };
 };
 
@@ -64,20 +63,20 @@ export const actions: Actions = {
       const data = await request.formData();
       const image = data.get('image') as string;
       const folder = data.get('folder') as string || '1'; // Default to '1' if not provided
-    
+
       // Validate input
       if (!image || !folder) {
         return { status: 400, body: { error: 'Missing image or folder' } };
       }
       
-      // Construct the file path with URL encoding
-      const filePath = `images/${folder}/${encodeURIComponent(image)}`;
-    
+      // Construct the file path with URL decoding
+      const filePath = `images/${folder}/${decodeURIComponent(image)}`;
+
       // Attempt to delete the specified file
       const { error: deleteError } = await supabase.storage
         .from('porto')
         .remove([filePath]);
-    
+
       if (deleteError) {
         console.error('Error deleting file:', deleteError);
         return { status: 500, body: { error: deleteError.message } };
