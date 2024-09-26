@@ -147,7 +147,7 @@
 
     <div class="w-full h-auto p-2 flex flex-col gap-4 sm:py-4 sm:grid sm:grid-cols-3">
       {#each data.images as image (image)}
-      <div class="border w-full sm:w-[300px] h-[230px] sm:h-[200px] mx-auto">
+      <div class="border w-full sm:w-[300px] h-[230px] sm:h-[200px] mx-auto">l
         <div class="w-full h-full overflow-hidden group relative">
           <img src="{image}" alt="gambar" class="gambarlah w-full h-full object-cover object-center transition-transform duration-[350ms] group-hover:scale-110">
           {#if isCheckboxChecked}

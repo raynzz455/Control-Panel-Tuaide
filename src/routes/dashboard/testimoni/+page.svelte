@@ -6,11 +6,29 @@
     <div class="content w-full sm:max-w-[1000px] max-h-[90vh] mx-auto">
         <div class="w-full h-[60px] mx-auto rounded-tl-2xl rounded-tr-2xl">
             <button 
-                class="bg-transparent text-black font-bold border-2 border-black py-2 px-3 rounded-full mt-2 hover:shadow-[4px_4px_0px_black] hover:translate-x-1 hover:translate-y-1 transition-all ease-in-out duration-300" 
+                class="bg-transparent text-black font-bold border-2 border-black py-2 px-3 rounded-full mt-2 hover:shadow-[4px_4px_0px_black] hover:-translate-x-1 hover:-translate-y-1 transition-all ease-in-out duration-300" 
                 on:click={() => { showForm = !showForm; }}>
                 Add Comment
             </button>
         </div>
+        <div class="flex flex-col sm:grid sm:grid-cols-3 gap-4 mt-5">
+            <div class="border-2 border-black rounded-lg w-full sm:w-[300px] h-[230px] sm:h-[200px] mx-auto p-4 transition-all duration-300 ease-in-out hover:-translate-x-2 hover:-translate-y-2 hover:shadow-[4px_4px_0px_black]">
+                <div class="flex flex-col justify-between h-full">
+                    <div class="text-center text-lg font-semibold mb-12">
+                        "Sebuah komentar yang informatif dan singkat."
+                    </div>
+                    <div class="text-center text-md font-medium">
+                        John Doe
+                    </div>
+                    <div class="text-center text-sm text-gray-600">
+                        Seorang pengembang web yang berpengalaman.
+                    </div>
+                </div>
+            </div>
+            
+
+        </div>
+
 
         {#if showForm}
         <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
