@@ -34,7 +34,7 @@
 		</button>
 		{#if isOpen}
 		  <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-20">
-			<a href="/home" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Home</a>
+			<a href="/dashboard" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Home</a>
 			<button on:click={logout} class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200">Logout</button>
 		  </div>
 		{/if}

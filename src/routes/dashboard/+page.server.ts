@@ -3,7 +3,6 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ locals: { supabase } }) => {
   try {
     const subfolders = ['1', '2', '3', '4'];
-    let totalFiles = 0;
     const imageUrls: string[] = [];
 
     const folderPromises = subfolders.map(async (subfolder) => {
@@ -16,25 +15,20 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
         return [];
       }
 
-      const urlPromises = files?.map(async (file) => {
-        const { data: publicUrlData } = await supabase.storage
-          .from('porto')
-          .getPublicUrl(`images/${subfolder}/${file.name}`);
+      const urlPromises = files?.map(file => 
+        supabase.storage.from('porto').getPublicUrl(`images/${subfolder}/${file.name}`)
+      ) || [];
 
-        return publicUrlData?.publicUrl;
-      }) || [];
-
-      const urls = await Promise.all(urlPromises);
-      const validUrls = urls.filter((url): url is string => url !== undefined);
-      totalFiles += validUrls.length;
-      return validUrls;
+      const urlData = await Promise.all(urlPromises);
+      return urlData
+        .map(data => data.data?.publicUrl)
+        .filter((url): url is string => url !== undefined);
     });
+
     const results = await Promise.all(folderPromises);
-    results.forEach((urls) => {
-      imageUrls.push(...urls);
-    });
+    results.forEach(urls => imageUrls.push(...urls));
 
-    return { total: totalFiles, imageUrls };
+    return { total: imageUrls.length, imageUrls };
   } catch (error) {
     console.error('Unexpected error:', error);
     return { total: 0, imageUrls: [] };
