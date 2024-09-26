@@ -95,19 +95,9 @@
         class="flex flex-row w-full h-[200px] md:h-[300px] p-4 sm:flex-col sm:w-1/2"
         aria-label="Go to Testimonials"
       >
-        <div class="relative w-full bg-white shadow-[5px_5px_0px_black] rounded-lg">
-          <div class="absolute inset-0 flex items-center justify-center text-9xl font-bold text-gray-300 opacity-0 hover:opacity-100 transition duration-300">
-            2
-          </div>
-          <div class="flex flex-row h-[200px] md:h-[260px]">
-            <div class="w-[25%] flex flex-col justify-between py-6 md:px-2 md:pt-8 md:pb-10">
-              <h2 class="text-md font-bold text-center">Testimoni</h2>
-              <h3 class="text-md font-semibold text-center">Total:</h3>
-              <p class="text-lg font-bold text-center">123</p>
-            </div>
-            <div class="w-[75%] py-2 pr-2">
-              <img src="/images/logo.png" alt="Testimonial Text" class="object-cover h-full w-full mx-auto" />
-            </div>
+        <div class="relative w-full bg-white shadow-[5px_5px_0px_black] border-2 border-black rounded-lg">
+          <div class="h-[200px] md:h-[260px]">
+            <p class="testimonial-text font-bold">Testimoni</p>
           </div>
         </div>
       </button>
@@ -116,7 +106,17 @@
 </body>
 
 <style>
+  .testimonial-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 2rem; 
+    padding: 16px; 
+    text-align: center; 
+  }
+
   img {
-    transition: opacity 0.5s ease-in-out; /* Smooth transition for opacity */
+    transition: opacity 0.6s ease-in-out; 
   }
 </style>

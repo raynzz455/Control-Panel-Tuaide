@@ -2,6 +2,13 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals: { supabase } }) => {
   try {
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      console.error('User is not authenticated:', userError);
+      return { total: 0, imageUrls: [] };
+    }
+
     const subfolders = ['1', '2', '3', '4'];
     const imageUrls: string[] = [];
 

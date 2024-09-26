@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Fun from '$lib/components/Delup.svelte';
+  import Fun from '$lib/components/deleteIMG.svelte';
   import { goto } from '$app/navigation';
   import { fade } from 'svelte/transition';
   import { onMount } from 'svelte';
@@ -78,7 +78,6 @@
     }
   }
 
-  // Fungsi untuk memeriksa ukuran layar
   function checkScreenWidth() {
     if (window.matchMedia("(min-width: 640px)").matches) {
       displayClass = 'block'; 
