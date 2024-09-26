@@ -30,7 +30,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
     const { data: publicUrlData } = supabase.storage
       .from('porto')
       .getPublicUrl(`images/${folder}/${file.name}`);
-    
+
     if (!publicUrlData) {
       console.error('Error fetching public URL for file:', file.name);
       return null;
@@ -53,6 +53,7 @@ export const actions: Actions = {
     const supabase = locals.supabase;
     const { data: { user }, error: userError } = await supabase.auth.getUser();
 
+    // Validate user authentication
     if (userError || !user) {
       return { status: 401, body: { error: 'User not authenticated' } };
     }
@@ -62,13 +63,17 @@ export const actions: Actions = {
     if (method === 'DELETE') {
       const data = await request.formData();
       const image = data.get('image') as string;
-      const folder = data.get('folder') as string || '1'; 
+      const folder = data.get('folder') as string || '1'; // Default to '1' if not provided
+    
+      // Validate input
       if (!image || !folder) {
         return { status: 400, body: { error: 'Missing image or folder' } };
       }
       
+      // Construct the file path with URL encoding
       const filePath = `images/${folder}/${encodeURIComponent(image)}`;
     
+      // Attempt to delete the specified file
       const { error: deleteError } = await supabase.storage
         .from('porto')
         .remove([filePath]);
@@ -81,10 +86,12 @@ export const actions: Actions = {
       return { status: 200, body: { message: 'File deleted successfully' } };
     }
 
+    // Handle file upload (POST method)
     const data = await request.formData();
     const file = data.get('file') as File;
     const folder = data.get('folder') as string || '1';
 
+    // Validate file upload
     if (!file) {
       return { status: 400, body: { error: 'No file uploaded' } };
     }
@@ -94,6 +101,7 @@ export const actions: Actions = {
       .from('porto')
       .upload(filePath, file);
 
+    // Handle upload errors
     if (error) {
       return { status: 500, body: { error: error.message } };
     }
@@ -101,4 +109,3 @@ export const actions: Actions = {
     return { status: 200, body: { message: 'File uploaded successfully', data: uploadData } };
   }
 };
-

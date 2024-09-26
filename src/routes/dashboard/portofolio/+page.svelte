@@ -2,18 +2,14 @@
   import Fun from '$lib/components/Delup.svelte';
   import { goto } from '$app/navigation';
   import { fade } from 'svelte/transition';
-
   export let data: { images: string[], folder: string, user: { email: string } | null };
-
   let selectedFolder = data.folder || '1';
   let isLoading = false;
-
   function handleFolderChange(event: Event) {
     const target = event.target as HTMLSelectElement;
     selectedFolder = target.value;
     goto(`?folder=${selectedFolder}`);
   }
-
   function handleFileChange(event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
@@ -27,9 +23,7 @@
       }
     }
   }
-
   let isCheckboxChecked = false;
-
   function handleCheckboxChange(event: Event) {
     const target = event.target as HTMLInputElement;
     isCheckboxChecked = target.checked;
@@ -39,24 +33,19 @@
     alert("URL gambar tidak valid.");
     return;
   }
-
   const imageName = imageUrl.split('/').pop()?.split('?')[0];
-  const folder = selectedFolder; 
-
+  const folder = selectedFolder; // Maintain the context of the selected folder
   if (!imageName) {
     alert("Nama file tidak ditemukan.");
     return;
   }
-
   const confirmDelete = confirm(`Apakah kamu yakin ingin menghapus "${imageName}"?`);
-
   if (confirmDelete) {
     isLoading = true;
-
+    // Using FormData for deletion
     const formData = new FormData();
     formData.append('image', imageName);
-    formData.append('folder', folder); 
-
+    formData.append('folder', folder); // Use the selected folder
     const response = await fetch('/dashboard/portofolio', {
       method: 'POST',
       headers: {
@@ -64,8 +53,8 @@
       },
       body: formData,
     });
-
     if (response.ok) {
+      // Refresh the entire page to reload data
       window.location.reload();
     } else {
       const result = await response.json();
@@ -74,8 +63,6 @@
     isLoading = false;
   }
 }
-
-
 </script>
 
 <div class="bg-white max-h-screen w-screen sm:max-w-[1000px] mx-auto">
