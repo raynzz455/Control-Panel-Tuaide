@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 
     if (userError || !user) {
       console.error('User is not authenticated:', userError);
-      return { total: 0, imageUrls: [] };
+      return { total: 0, imageUrls: [],errorMessage: 'Unable to fetch user data.' };
     }
 
     const subfolders = ['1', '2', '3', '4'];

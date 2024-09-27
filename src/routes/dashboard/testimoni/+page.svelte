@@ -1,4 +1,5 @@
 <script lang="ts">
+    export let comments: { komentar: string; nama_customer: string; keterangan_customer: string; created_at: string }[] = [];
     let showForm = false;
 </script>
 
@@ -11,66 +12,29 @@
                 Add Comment
             </button>
         </div>
+
         <div class="flex flex-col sm:grid sm:grid-cols-3 gap-4 mt-5">
-            <div class="border-2 border-black rounded-lg w-full sm:w-[300px] h-[230px] sm:h-[200px] mx-auto p-4 transition-all duration-300 ease-in-out hover:-translate-x-2 hover:-translate-y-2 hover:shadow-[4px_4px_0px_black]">
-                <div class="flex flex-col justify-between h-full">
-                    <div class="text-center text-lg font-semibold mb-12">
-                        "Sebuah komentar yang informatif dan singkat."
-                    </div>
-                    <div class="text-center text-md font-medium">
-                        John Doe
-                    </div>
-                    <div class="text-center text-sm text-gray-600">
-                        Seorang pengembang web yang berpengalaman.
+            {#each comments as { komentar, nama_customer, keterangan_customer }}
+                <div class="border-2 border-black rounded-lg w-full sm:w-[300px] h-[230px] sm:h-[200px] mx-auto p-4 transition-all duration-300 ease-in-out hover:-translate-x-2 hover:-translate-y-2 hover:shadow-[4px_4px_0px_black]">
+                    <div class="flex flex-col justify-between h-full">
+                        <div class="text-center text-lg font-semibold mb-2">
+                            "{komentar}"
+                        </div>
+                        <div class="text-center text-md font-medium">
+                            {nama_customer}
+                        </div>
+                        {#if keterangan_customer}
+                            <div class="text-center text-sm text-gray-600">
+                                {keterangan_customer}
+                            </div>
+                        {/if}
                     </div>
                 </div>
-            </div>
-            
-
+            {/each}
         </div>
-
 
         {#if showForm}
-        <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div class="bg-gray-200 p-4 rounded-md shadow-lg w-11/12 sm:w-1/3 relative">
-                <button 
-                    class="absolute top-2 right-2 text-red-500 bg-red-200 rounded-full p-1 hover:bg-red-300 transition-colors" 
-                    on:click={() => showForm = false}>
-                    &times; <!-- Close button -->
-                </button>
-                <form method="POST">
-                    <div>
-                        <label class="block mb-2" for="name">Name:</label>
-                        <input 
-                            type="text" 
-                            name="name" 
-                            class="border border-gray-400 p-2 w-full mb-4 rounded"
-                            required 
-                        />
-                    </div>
-                    <div>
-                        <label class="block mb-2" for="comment">Comment:</label>
-                        <textarea 
-                            name="comment" 
-                            class="border border-gray-400 p-2 w-full mb-4 rounded"
-                            required 
-                        ></textarea>
-                    </div>
-                    <div>
-                        <label class="block mb-2" for="description">Description (optional):</label>
-                        <textarea 
-                            name="description" 
-                            class="border border-gray-400 p-2 w-full mb-4 rounded"
-                        ></textarea>
-                    </div>
-                    <button 
-                        type="submit" 
-                        class="bg-green-500 text-white font-bold py-2 px-4 rounded">
-                        Submit
-                    </button>
-                </form>
-            </div>
-        </div>
+            <!-- Form code here -->
         {/if}
     </div>
 </body>

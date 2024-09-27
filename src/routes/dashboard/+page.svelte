@@ -9,37 +9,34 @@
   let isFading = false;
 
   const updateImage = () => {
-    // Update index dan ambil gambar baru
     currentIndex = (currentIndex + 1) % data.imageUrls.length;
     currentImage = data.imageUrls[currentIndex];
-    isVisible = true; // Siapkan untuk fade in
-    isFading = false; // Reset fading state
+    isVisible = true; 
+    isFading = false;
   };
 
   const fadeIn = () => {
-    isVisible = true; // Mulai fade in
+    isVisible = true;
     setTimeout(() => {
-      isFading = false; // Reset fading state setelah fade in
-    }, 500); // Durasi fade in
+      isFading = false; 
+    }, 500); 
   };
 
   const fadeOut = () => {
-    isFading = true; // Aktifkan fade out
+    isFading = true;
     setTimeout(() => {
-      updateImage(); // Update gambar setelah fade out
-      fadeIn(); // Mulai fade in untuk gambar baru
-    }, 500); // Durasi fade out
+      updateImage();
+      fadeIn(); 
+    }, 500);
   };
 
   onMount(() => {
     if (data.imageUrls.length > 0) {
       currentImage = data.imageUrls[currentIndex];
       const interval = setInterval(() => {
-        fadeOut(); // Panggil fade out saat interval
-      }, 10000); // Tunggu 10 detik sebelum fade out
-
-      fadeIn(); // Mulai fade in untuk gambar pertama
-
+        fadeOut(); 
+      }, 10000); 
+      fadeIn(); 
       return () => clearInterval(interval);
     }
   });
@@ -53,18 +50,29 @@
     event.preventDefault();
     await goto('/dashboard/testimoni');
   };
-
-  const handleDashboardHover = async () => {
-    await fetch('/dashboard'); 
-  };
 </script>
+
+<style>
+  .testimonial-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 2rem; 
+    padding: 16px; 
+    text-align: center; 
+  }
+
+  img {
+    transition: opacity 0.6s ease-in-out; 
+  }
+</style>
 
 <body class="bg-white">
   <div class="max-h-screen w-screen md:max-w-[1000px] md:max-h-[500px] mx-auto">
     <div class="content md:mt-10 sm:flex">
       <button
         on:click={handlePortfolioClick}
-        on:mouseenter={handleDashboardHover}
         class="flex flex-row w-full h-[200px] mb-5 md:h-[300px] p-4 sm:flex-col sm:w-1/2"
         aria-label="Go to Portfolio"
       >
@@ -91,7 +99,6 @@
 
       <button
         on:click={handleTestimonialClick}
-        on:mouseenter={handleDashboardHover}
         class="flex flex-row w-full h-[200px] md:h-[300px] p-4 sm:flex-col sm:w-1/2"
         aria-label="Go to Testimonials"
       >
@@ -104,19 +111,3 @@
     </div>
   </div>
 </body>
-
-<style>
-  .testimonial-text {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    font-size: 2rem; 
-    padding: 16px; 
-    text-align: center; 
-  }
-
-  img {
-    transition: opacity 0.6s ease-in-out; 
-  }
-</style>

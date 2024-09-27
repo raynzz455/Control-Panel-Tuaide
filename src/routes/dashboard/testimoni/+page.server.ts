@@ -10,46 +10,18 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
         };
     }
 
-    const { data, error } = await supabase
+    const { data: comments, error: fetchError } = await supabase
         .from('customer_comments')
-        .select('*');
+        .select('komentar, nama_customer, keterangan_customer, created_at')
+        .order('created_at', { ascending: false });
 
-    return { comments: data || [], error };
-};
-
-export const actions = {
-    default: async ({ request, locals: { supabase } }) => {
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-        if (userError || !user) {
-            return {
-                status: 401, 
-                body: { message: 'You must be logged in to submit a comment.' }
-            };
-        }
-
-        const formData = await request.formData();
-        const name = formData.get('name') as string;
-        const comment = formData.get('comment') as string;
-        const description = formData.get('description') as string || '';
-
-        const { error } = await supabase
-            .from('customer_comments')
-            .insert([{ nama_customer: name, komentar: comment, keterangan_customer: description }]);
-
-        if (error) {
-            console.error('Error adding comment:', error);
-            return {
-                status: 500,
-                body: { message: 'Failed to add comment' }
-            };
-        }
-
+    if (fetchError) {
+        console.error('Error fetching comments:', fetchError);
         return {
-            status: 303, 
-            headers: {
-                location: '/dashboard/testimoni' 
-            }
+            status: 500,
+            body: { message: 'Failed to fetch comments' }
         };
     }
+
+    return { comments: comments || [] };
 };
