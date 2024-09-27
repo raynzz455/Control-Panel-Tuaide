@@ -2,8 +2,8 @@
     import "../app.css";
     import { goto } from '$app/navigation';
 
-    async function handleRedirect() {
-       await goto('/dashboard');
+    function handleRedirect() {
+       goto('/dashboard');
     }
 
     export { handleRedirect };
