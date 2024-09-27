@@ -41,7 +41,14 @@ export const actions: Actions = {
             return { status: 500, body: { message: 'Failed to add comment' } };
         }
 
-        return { status: 200, body: data[0] };
+        return { 
+            status: 200, 
+            body: { 
+                message: 'Comment added successfully!', 
+                comment: data[0] 
+            } 
+        };
     }
 };
+
 

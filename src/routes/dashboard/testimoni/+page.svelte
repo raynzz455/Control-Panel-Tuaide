@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Swal from 'sweetalert2'; // Import SweetAlert
+  import Swal from 'sweetalert2';
 
   export let data; 
   let showForm = false;
@@ -13,10 +13,9 @@
 
     if (response.ok) {
       const newComment = await response.json();
-      data.comments.push(newComment); // Tambahkan komentar baru ke daftar
-      showForm = false; // Sembunyikan form
+      data.comments.push(newComment);
+      showForm = false; 
 
-      // Tampilkan SweetAlert
       Swal.fire({
         title: 'Success!',
         text: 'Comment successfully posted!',
@@ -50,7 +49,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
       {#if data.comments.length > 0}
         {#each data.comments as comment}
-          <div class="border-2 border-black rounded-lg w-full sm:w-[300px] h-auto mx-auto p-4 transition-all duration-300 ease-in-out hover:-translate-x-2 hover:-translate-y-2 hover:shadow-[4px_4px_0px_black]">
+          <div class="border-2 border-black rounded-lg w-full sm:w-[300px] h-auto mx-auto p-4 transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-[0px_10px_8px_black]">
             <div class="flex flex-col justify-between h-full">
               <p class="text-center text-lg font-semibold mb-2">"{comment.komentar}"</p>
               <p class="text-center text-md font-medium">{comment.nama_customer}</p>
