@@ -1,4 +1,16 @@
-import type { Actions } from './$types';
+import type { Actions, PageServerLoad } from './$types';
+export const load: PageServerLoad = async ({ locals }) => {
+    const supabase = locals.supabase;
+    const { data, error } = await supabase
+        .from('customer_comments')
+        .select('nama_customer, komentar, keterangan_customer');    
+    if (error) {
+        console.error('Error fetching comments:', error);
+        return { comments: [] }; 
+    }
+
+    return { comments: data || [] }
+};
 
 
 export const actions: Actions = {
@@ -22,13 +34,14 @@ export const actions: Actions = {
         const { data, error: insertError } = await supabase
             .from('customer_comments')
             .insert([{ nama_customer, komentar, keterangan_customer }])
-            .select(); 
+            .select();
 
         if (insertError) {
             console.error('Error inserting comment:', insertError);
             return { status: 500, body: { message: 'Failed to add comment' } };
         }
 
-        return { status: 200, body: data[0] }; 
+        return { status: 200, body: data[0] };
     }
 };
+
